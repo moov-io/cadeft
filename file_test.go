@@ -137,6 +137,7 @@ Z0000000040000000001000100000000000000000000000000000000000000000000000000000000
 		t.Run(name, func(t *testing.T) {
 			s, err := tc.file.Create()
 			r.NoError(err)
+			r.NoError(tc.file.Validate())
 			r.Equal(tc.expectedOutput, s)
 		})
 	}
@@ -245,6 +246,7 @@ Z0000000060000000001000100000000014000000000070000000001400000000007000000000000
 			freader := NewReader(strings.NewReader(tc.in))
 			f, err := freader.ReadFile()
 			r.NoError(err)
+			r.NoError(f.Validate())
 			r.Equal(tc.file.Header, f.Header)
 			r.Equal(tc.file.Footer, f.Footer)
 			for i := 0; i < len(tc.file.Txns); i++ {
