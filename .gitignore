@@ -19,3 +19,8 @@
 
 # Go workspace file
 go.work
+
+
+/bin/
+gitleaks.tar.gz
+lint-project.sh
