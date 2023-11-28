@@ -2,6 +2,7 @@ package cadeft
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 
 	"github.com/pkg/errors"
@@ -97,6 +98,8 @@ func (r *Reader) parseTxnRecord(data string) error {
 				return errors.Wrap(err, "failed to parse credit return transaction")
 			}
 			r.File.Txns = append(r.File.Txns, &creditReturns)
+		case HeaderRecord, FooterRecord, CreditReverseRecord, DebitReverseRecord, NoticeOfChangeRecord, NoticeOfChangeHeader, NoticeOfChangeFooter:
+			return fmt.Errorf("unexpected %s record", recType)
 		}
 		startIdx = endIdx
 		endIdx += segmentLength

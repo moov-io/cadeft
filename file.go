@@ -174,7 +174,7 @@ func (f File) buildTransactions(recordHeader RecordHeader, currentLine *int) (st
 		ReturnCreditRecord:  make([]Transaction, 0),
 		ReturnDebitRecord:   make([]Transaction, 0),
 	}
-	for _, t := range f.Txns {
+	for idx, t := range f.Txns {
 		switch t.GetType() {
 		case DebitRecord:
 			recTypeToTxs[DebitRecord] = append(recTypeToTxs[DebitRecord], t)
@@ -188,6 +188,8 @@ func (f File) buildTransactions(recordHeader RecordHeader, currentLine *int) (st
 			recTypeToTxs[ReturnCreditRecord] = append(recTypeToTxs[ReturnCreditRecord], t)
 		case ReturnDebitRecord:
 			recTypeToTxs[ReturnDebitRecord] = append(recTypeToTxs[ReturnDebitRecord], t)
+		case HeaderRecord, NoticeOfChangeRecord, NoticeOfChangeHeader, NoticeOfChangeFooter, FooterRecord:
+			return "", fmt.Errorf("transaction[%d] has unexpected record type: %v", idx, t.GetType())
 		}
 	}
 	var sb strings.Builder
@@ -299,6 +301,8 @@ func NewTransaction(
 		txn = lo.ToPtr(NewCreditReverse(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
 	case DebitReverseRecord:
 		txn = lo.ToPtr(NewDebitReverse(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
+	case HeaderRecord, NoticeOfChangeRecord, NoticeOfChangeHeader, NoticeOfChangeFooter, FooterRecord:
+		return nil
 	}
 	return txn
 }
