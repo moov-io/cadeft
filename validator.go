@@ -55,7 +55,7 @@ func eftCurrency(fl validator.FieldLevel) bool {
 
 func c(e error) {
 	if e != nil {
-		panic(fmt.Sprintf("failed to register validators: %s", e))
+		panic(fmt.Sprintf("failed to register validators: %s", e)) //nolint:forbidigo
 	}
 }
 
