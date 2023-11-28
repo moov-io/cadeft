@@ -53,7 +53,9 @@ func TestParseDebitReverse(t *testing.T) {
 			expectErr:   &ParseError{},
 		},
 	}
-	for name, tc := range cases {
+	for name := range cases {
+		tc := cases[name]
+
 		t.Run(name, func(t *testing.T) {
 			var cr DebitReverse
 			err := cr.Parse(tc.in)

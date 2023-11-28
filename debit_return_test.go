@@ -52,7 +52,9 @@ func TestParseReturnDebitTxn(t *testing.T) {
 			expectErr:   &ParseError{},
 		},
 	}
-	for name, tc := range cases {
+	for name := range cases {
+		tc := cases[name]
+
 		t.Run(name, func(t *testing.T) {
 			var debit DebitReturn
 			err := debit.Parse(tc.in)
