@@ -1,10 +1,9 @@
 package cadeft
 
 import (
+	"fmt"
 	"strings"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // DebitReturn represents Logical Record Type J according to the EFT standard 005
@@ -76,17 +75,17 @@ func (d DebitReturn) Build() (string, error) {
 	sb.WriteString(padNumericStringWithZeros(string(d.StoredTransactionType), 3))
 	shortName, err := formatName(d.OriginatorShortName, 15)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to format originator short name")
+		return "", fmt.Errorf("failed to format originator short name: %w", err)
 	}
 	sb.WriteString(shortName)
 	payorName, err := formatName(d.PayorName, 30)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to format payor name")
+		return "", fmt.Errorf("failed to format payor name: %w", err)
 	}
 	sb.WriteString(payorName)
 	longName, err := formatName(d.OriginatorLongName, 30)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to format originator long name")
+		return "", fmt.Errorf("failed to format originator long name: %w", err)
 	}
 	sb.WriteString(longName)
 	sb.WriteString(abreviateStringToLength(d.UserID, 10))

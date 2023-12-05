@@ -5,9 +5,16 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/pkg/errors"
 )
+
+func Ptr[T any](v T) *T {
+	return &v
+}
+func Arr[T any](v T) []*T {
+	var arrayOfT []*T
+	arrayOfT = append(arrayOfT, &v)
+	return arrayOfT
+}
 
 func parseNum(s string) (int64, error) {
 	return strconv.ParseInt(s, 10, 64)
@@ -24,21 +31,21 @@ func convertRecordType(recType string) (RecordType, error) {
 	case "Z":
 		return FooterRecord, nil
 	default:
-		return "", errors.New(fmt.Sprintf("unrecognized record type %s", recType))
+		return "", fmt.Errorf(fmt.Sprintf("unrecognized record type %s", recType))
 	}
 }
 
 func parseDate(date string) (time.Time, error) {
 	if len(date) != 6 {
-		return time.Time{}, errors.New("date string is not valid length")
+		return time.Time{}, fmt.Errorf("date string is not valid length")
 	}
 	year, err := strconv.Atoi(fmt.Sprintf("20%s", date[1:3]))
 	if err != nil {
-		return time.Time{}, errors.Wrap(err, "failed to convert year")
+		return time.Time{}, fmt.Errorf("failed to convert year: %w", err)
 	}
 	daysSinceJan1, err := strconv.Atoi(date[3:])
 	if err != nil {
-		return time.Time{}, errors.Wrap(err, "failed to convert days since jan 1st")
+		return time.Time{}, fmt.Errorf("failed to convert days since jan 1st: %w", err)
 	}
 	return time.Date(year, time.January, 0, 0, 0, 0, 0, time.UTC).AddDate(0, 0, daysSinceJan1), nil
 
@@ -104,7 +111,7 @@ func isTxnRecord(t string) bool {
 func formatName(s string, reqLen int) (string, error) {
 	normal, err := normalize(s)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to normalize string")
+		return "", fmt.Errorf("failed to normalize string: %w", err)
 	}
 	formatted := abreviateStringToLength(normal, reqLen)
 	return formatted, nil

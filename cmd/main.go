@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/moov-io/cadeft"
-	"github.com/pkg/errors"
 )
 
 func main() {
@@ -31,12 +30,12 @@ func main() {
 		if fileName != "" {
 			file, err := os.Open(fileName)
 			if err != nil {
-				log.Fatal(errors.Wrapf(err, "failed to open file %s", fileName))
+				log.Fatal(fmt.Errorf("failed to open file %s: %w", fileName, err))
 			}
 			reader := cadeft.NewReader(file)
 			eftFile, err = reader.ReadFile()
 			if err != nil {
-				log.Fatal(errors.Wrapf(err, "failed to parse file"))
+				log.Fatal(fmt.Errorf("failed to parse file: %w", err))
 			}
 		} else {
 			stdin, err := io.ReadAll(os.Stdin)

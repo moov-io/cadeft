@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-multierror"
-	"github.com/pkg/errors"
 )
 
 // FileStreamer is used for stream parsing an EFT file. Instead of reading the whole file FileStreamer attempts to read segments of transactions line by line.
@@ -39,25 +38,25 @@ func (fs FileStreamer) GetHeader() (*FileHeader, error) {
 	// Frst line of the file should be the header
 	success := scanner.Scan()
 	if !success {
-		return nil, errors.Wrap(scanner.Err(), "failed to scan for file header")
+		return nil, fmt.Errorf("failed to scan for file header: %w", scanner.Err())
 	}
 
 	line := scanner.Text()
 	if len(line) == 0 {
-		return nil, errors.New("file header is empty")
+		return nil, fmt.Errorf("file header is empty")
 	}
 
 	recType, err := parseRecordType(string(line[0]))
 	if err != nil {
-		return nil, errors.Wrap(err, "file header not found")
+		return nil, fmt.Errorf("file header not found: %w", err)
 	}
 	if recType != HeaderRecord {
-		return nil, errors.New("first record in file is not a header record")
+		return nil, fmt.Errorf("first record in file is not a header record")
 	}
 	header := &FileHeader{}
 	err = header.parse(line)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse file header")
+		return nil, fmt.Errorf("failed to parse file header: %w", err)
 	}
 	return header, nil
 }
@@ -72,18 +71,18 @@ func (fs FileStreamer) GetFooter() (*FileFooter, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		if len(line) < 1 {
-			return nil, errors.New("line too short to determine record type")
+			return nil, fmt.Errorf("line too short to determine record type")
 		}
 		recType := line[:1]
 		if recType == string(FooterRecord) {
 			ff := &FileFooter{}
 			if err := ff.Parse(line); err != nil {
-				return nil, errors.Wrap(err, "failed to parse file footer")
+				return nil, fmt.Errorf("failed to parse file footer: %w", err)
 			}
 			return ff, nil
 		}
 	}
-	return nil, errors.New("failed to find footer record")
+	return nil, fmt.Errorf("failed to find footer record")
 }
 
 // ScanTxn parses transaction records (D, C, I, J, E and F logical records) one at a time. Upon successfully parsing a transaction segment a Transaction struct is returned otherwise a non nil error is returned in
@@ -94,13 +93,13 @@ func (fs *FileStreamer) ScanTxn() (Transaction, error) {
 	if fs.currentLine == 0 {
 		if !fs.scanner.Scan() {
 			if fs.scanner.Err() != nil {
-				return nil, errors.Wrap(fs.scanner.Err(), "failed forward reader to txn record")
+				return nil, fmt.Errorf("failed forward reader to txn record: %w", fs.scanner.Err())
 			}
 			return nil, io.EOF
 
 		}
 		if len(fs.scanner.Text()) == 0 || !isHeaderRecordType(string(fs.scanner.Text()[0])) {
-			return nil, errors.New("first line in file is not a header record")
+			return nil, fmt.Errorf("first line in file is not a header record")
 		}
 		fs.currentLine++
 	}
@@ -109,7 +108,7 @@ func (fs *FileStreamer) ScanTxn() (Transaction, error) {
 	if fs.currentTxn == 0 && fs.numTxnsPerLine == 0 {
 		if !fs.scanner.Scan() {
 			if fs.scanner.Err() != nil {
-				return nil, errors.Wrap(fs.scanner.Err(), "failed to read transactions")
+				return nil, fmt.Errorf("failed to read transactions: %w", fs.scanner.Err())
 			}
 			return nil, io.EOF
 		}
@@ -121,7 +120,7 @@ func (fs *FileStreamer) ScanTxn() (Transaction, error) {
 		}
 
 		if len(fs.lineContents[commonRecordDataLength:])%segmentLength != 0 {
-			return nil, errors.Errorf("txn record at line %d is not of correct length", fs.currentLine)
+			return nil, fmt.Errorf("txn record at line %d is not of correct length", fs.currentLine)
 		}
 
 		fs.numTxnsPerLine = len(fs.lineContents[commonRecordDataLength:]) / segmentLength
@@ -131,7 +130,7 @@ func (fs *FileStreamer) ScanTxn() (Transaction, error) {
 	recordType, err := parseRecordType(fs.lineContents[:1])
 	if err != nil {
 		fs.currentTxn, fs.numTxnsPerLine = 0, 0
-		return nil, errors.Wrapf(err, "unrecognized record type at line %d", fs.currentLine)
+		return nil, fmt.Errorf("unrecognized record type at line %d: %w", fs.currentLine, err)
 	}
 
 	if fs.currentTxn == (fs.numTxnsPerLine - 1) {
@@ -199,7 +198,7 @@ func (fs *FileStreamer) reset() {
 func newStreamParseError(err error, recordType string, txnNum, line int) error {
 	return multierror.Append(
 		err,
-		errors.Errorf("parse error for record %s number %d line %d", recordType, txnNum, line),
+		fmt.Errorf("parse error for record %s number %d line %d", recordType, txnNum, line),
 		ErrScanParseError,
 	)
 }

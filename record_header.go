@@ -1,9 +1,8 @@
 package cadeft
 
 import (
+	"fmt"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 // RecordHeader represnts the common field that begins every Transaction line in an EFT file.
@@ -19,16 +18,16 @@ type RecordHeader struct {
 func (rh *RecordHeader) parse(line string) error {
 	var err error
 	if rh.RecordType, err = convertRecordType(line[:1]); err != nil {
-		return errors.Wrap(err, "faield to parse RecordHeader")
+		return fmt.Errorf("faield to parse RecordHeader: %w", err)
 	}
 
 	if rh.recordCount, err = parseNum(line[1:10]); err != nil {
-		return errors.Wrap(err, "failed to parse RecordCount")
+		return fmt.Errorf("failed to parse RecordCount: %w", err)
 	}
 
 	rh.OriginatorID = strings.TrimSpace(line[10:20])
 	if rh.FileCreationNum, err = parseNum(line[20:24]); err != nil {
-		return errors.Wrap(err, "failed to parse FileCreationNum")
+		return fmt.Errorf("failed to parse FileCreationNum: %w", err)
 	}
 
 	return nil

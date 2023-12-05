@@ -1,10 +1,9 @@
 package cadeft
 
 import (
+	"fmt"
 	"strings"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // CreditReverse represents Logical Record Type E according to the EFT standard 005
@@ -110,17 +109,17 @@ func (c CreditReverse) Build() (string, error) {
 	sb.WriteString(padNumericStringWithZeros(string(c.StoredTransactionType), 3))
 	shortName, err := formatName(c.OriginatorShortName, 15)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to format originator short name")
+		return "", fmt.Errorf("failed to format originator short name: %w", err)
 	}
 	sb.WriteString(shortName)
 	payeeName, err := formatName(c.PayeeName, 30)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to format payee name")
+		return "", fmt.Errorf("failed to format payee name: %w", err)
 	}
 	sb.WriteString(payeeName)
 	longName, err := formatName(c.OriginatorLongName, 30)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to format originator long name")
+		return "", fmt.Errorf("failed to format originator long name: %w", err)
 	}
 	sb.WriteString(longName)
 	sb.WriteString(abreviateStringToLength(c.UserID, 10))
