@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
 )
 
@@ -33,7 +32,7 @@ func TestParseDebitReverse(t *testing.T) {
 					SettlementCode:        "",
 					RecordType:            DebitReverseRecord,
 				},
-				DueDate:             lo.ToPtr(time.Date(2023, time.May, 17, 0, 0, 0, 0, time.UTC)),
+				DueDate:             Ptr(time.Date(2023, time.May, 17, 0, 0, 0, 0, time.UTC)),
 				PayorAccountNo:      "101000000303",
 				PayorName:           "D1-1-OCC ZERO",
 				ReturnInstitutionID: "000101261",

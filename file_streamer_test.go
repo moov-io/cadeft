@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
 )
 
@@ -28,7 +27,7 @@ func TestStreamGetHeader(t *testing.T) {
 					OriginatorID:    "0000000610",
 					FileCreationNum: 1,
 				},
-				CreationDate:                   lo.ToPtr(time.Date(2023, time.May, 18, 0, 0, 0, 0, time.UTC)),
+				CreationDate:                   Ptr(time.Date(2023, time.May, 18, 0, 0, 0, 0, time.UTC)),
 				DestinationDataCenterNo:        61210,
 				DirectClearerCommunicationArea: "hello",
 				CurrencyCode:                   "CAD",
@@ -123,7 +122,7 @@ Z0000000040000000001000100000000007000000000070000000000000000000000000000000000
 
 	fs1 := NewFileStream(reader)
 	date := time.Date(2023, 10, 2, 0, 0, 0, 0, time.UTC)
-	txn := lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111"))
+	txn := Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111"))
 	parsedTxn, err := fs1.ScanTxn()
 	r.NoError(err)
 	r.Equal(txn, parsedTxn)
@@ -139,20 +138,20 @@ Z0000000060000000001000100000000014000000000070000000001400000000007000000000000
 	fs2 := NewFileStream(reader2)
 	var txns []Transaction
 	complexTxns := append(txns,
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")))
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")))
 	for _, txn := range complexTxns {
 		parsedTxn, err := fs2.ScanTxn()
 		r.NoError(err)
@@ -186,9 +185,9 @@ Z0000000040000000001000100000000007000000000070000000000000000000000000000000000
 	reader4 := strings.NewReader(invlaidFile2)
 	fs4 := NewFileStream(reader4)
 	expectedTxns := []Transaction{
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
 	}
 
 	i := 0
@@ -220,7 +219,7 @@ Z0000000040000000001000100000000007000000000070000000000000000000000000000000000
 			r.ErrorAs(err, &perr)
 		} else if i == 1 {
 			r.NoError(err)
-			r.Equal(lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")), txn)
+			r.Equal(Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")), txn)
 		} else {
 			r.ErrorIs(err, io.EOF)
 		}

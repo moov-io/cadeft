@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-multierror"
-	"github.com/samber/lo"
 )
 
 const (
@@ -289,17 +288,17 @@ func NewTransaction(
 	var txn Transaction
 	switch recordType {
 	case DebitRecord:
-		txn = lo.ToPtr(NewDebit(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, opts...))
+		txn = Ptr(NewDebit(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, opts...))
 	case CreditRecord:
-		txn = lo.ToPtr(NewCredit(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, opts...))
+		txn = Ptr(NewCredit(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, opts...))
 	case ReturnDebitRecord:
-		txn = lo.ToPtr(NewDebitReturn(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
+		txn = Ptr(NewDebitReturn(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
 	case ReturnCreditRecord:
-		txn = lo.ToPtr(NewCreditReturn(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
+		txn = Ptr(NewCreditReturn(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
 	case CreditReverseRecord:
-		txn = lo.ToPtr(NewCreditReverse(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
+		txn = Ptr(NewCreditReverse(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
 	case DebitReverseRecord:
-		txn = lo.ToPtr(NewDebitReverse(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
+		txn = Ptr(NewDebitReverse(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
 	case HeaderRecord, NoticeOfChangeRecord, NoticeOfChangeHeader, NoticeOfChangeFooter, FooterRecord:
 		return nil
 	}

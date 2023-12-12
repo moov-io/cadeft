@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
 )
 
@@ -34,7 +33,7 @@ func TestParseReturnCredit(t *testing.T) {
 					InvalidDataElementID:  "00000000000",
 					RecordType:            ReturnCreditRecord,
 				},
-				DateFundsAvailable:    lo.ToPtr(time.Date(2023, time.May, 17, 0, 0, 0, 0, time.UTC)),
+				DateFundsAvailable:    Ptr(time.Date(2023, time.May, 17, 0, 0, 0, 0, time.UTC)),
 				PayeeAccountNo:        "101000000303",
 				PayeeName:             "D1-1-OCC ZERO",
 				OriginalInstitutionID: "000101261",

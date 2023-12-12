@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,72 +19,72 @@ func TestCreateFile(t *testing.T) {
 	header := NewFileHeader("0000000001", 1, &date, 12345, "CAD")
 	var debitTxns []Transaction
 	debitTxns = append(debitTxns,
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "12345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "12345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "12345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "12345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "12345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "12345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "12345", "Short name", "payor name", "my long name", "123456789", "1111111")))
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "12345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "12345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "12345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "12345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "12345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "12345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "12345", "Short name", "payor name", "my long name", "123456789", "1111111")))
 	debitFile := NewFile(header, debitTxns)
 
 	var creditTxns []Transaction
 	creditTxns = append(creditTxns,
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "12313213", "short name", "payee name", "someone", "1231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "12313213", "short name", "payee name", "someone", "1231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "12313213", "short name", "payee name", "someone", "1231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "12313213", "short name", "payee name", "someone", "1231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "12313213", "short name", "payee name", "someone", "1231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "12313213", "short name", "payee name", "someone", "1231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "12313213", "short name", "payee name", "someone", "1231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "12313213", "short name", "payee name", "someone", "1231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "12313213", "short name", "payee name", "someone", "1231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "12313213", "short name", "payee name", "someone", "1231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "12313213", "short name", "payee name", "someone", "1231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "12313213", "short name", "payee name", "someone", "1231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "12313213", "short name", "payee name", "someone", "1231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "12313213", "short name", "payee name", "someone", "1231", "12345")),
 	)
 	creditFile := NewFile(header, creditTxns)
 
 	var creditReturns []Transaction
 	creditReturns = append(creditReturns,
-		lo.ToPtr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
-		lo.ToPtr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
-		lo.ToPtr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
-		lo.ToPtr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
-		lo.ToPtr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
-		lo.ToPtr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
-		lo.ToPtr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
-		lo.ToPtr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReturn("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
 	)
 	creditReturnsFile := NewFile(header, creditReturns)
 	var debitReturns []Transaction
 	debitReturns = append(debitReturns,
-		lo.ToPtr(NewDebitReturn("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
-		lo.ToPtr(NewDebitReturn("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
-		lo.ToPtr(NewDebitReturn("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
-		lo.ToPtr(NewDebitReturn("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
-		lo.ToPtr(NewDebitReturn("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
-		lo.ToPtr(NewDebitReturn("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
-		lo.ToPtr(NewDebitReturn("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
+		Ptr(NewDebitReturn("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
+		Ptr(NewDebitReturn("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
+		Ptr(NewDebitReturn("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
+		Ptr(NewDebitReturn("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
+		Ptr(NewDebitReturn("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
+		Ptr(NewDebitReturn("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
+		Ptr(NewDebitReturn("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
 	)
 	debitReturnsFile := NewFile(header, debitReturns)
 
 	var creditReversals []Transaction
 	creditReversals = append(creditReversals,
-		lo.ToPtr(NewCreditReverse("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
-		lo.ToPtr(NewCreditReverse("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
-		lo.ToPtr(NewCreditReverse("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
-		lo.ToPtr(NewCreditReverse("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
-		lo.ToPtr(NewCreditReverse("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
-		lo.ToPtr(NewCreditReverse("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
-		lo.ToPtr(NewCreditReverse("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReverse("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReverse("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReverse("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReverse("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReverse("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReverse("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
+		Ptr(NewCreditReverse("900", 1000, &date, "12345", "1234567", "2222222222222222222222", "sender", "receiver", "sender full name", "54321", "7654321", "3333333333333333333333")),
 	)
 	creditReversalsFile := NewFile(header, creditReversals)
 
 	var debitReversals []Transaction
 	debitReversals = append(debitReversals,
-		lo.ToPtr(NewDebitReverse("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
-		lo.ToPtr(NewDebitReverse("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
-		lo.ToPtr(NewDebitReverse("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
-		lo.ToPtr(NewDebitReverse("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
-		lo.ToPtr(NewDebitReverse("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
-		lo.ToPtr(NewDebitReverse("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
-		lo.ToPtr(NewDebitReverse("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
+		Ptr(NewDebitReverse("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
+		Ptr(NewDebitReverse("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
+		Ptr(NewDebitReverse("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
+		Ptr(NewDebitReverse("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
+		Ptr(NewDebitReverse("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
+		Ptr(NewDebitReverse("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
+		Ptr(NewDebitReverse("900", 1000, &date, "12345", "123", "2222222222222222222222", "someone", "payor", "some long name", "54321", "123211", "4444444444444444444444")),
 	)
 	debitReversalFile := NewFile(header, debitReversals)
 
@@ -157,13 +156,13 @@ D0000000030000000001000140000000010000232759876543211234        0000000000000000
 Z000000004000000000100010000000000700000000007000000000000000000000000000000000000000000000000000000000000000000`
 	var debitTxns []Transaction
 	debitTxns = append(debitTxns,
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
-		lo.ToPtr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")))
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")),
+		Ptr(NewDebit("400", 1000, &date, "987654321", "1234", "0000000000000000012345", "Short name", "payor name", "my long name", "123456789", "1111111")))
 	debitFile := NewFile(header, debitTxns)
 	debitFooter := FileFooter{
 		RecordHeader: RecordHeader{
@@ -183,13 +182,13 @@ C00000000300000000010001450000000100002327512345678912345       0000000000000012
 Z000000004000000000100010000000000000000000000000000000070000000000700000000000000000000000000000000000000000000`
 	var creditTxns []Transaction
 	creditTxns = append(creditTxns,
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
-		lo.ToPtr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
+		Ptr(NewCredit("450", 1000, &date, "123456789", "12345", "0000000000000012313213", "short name", "payee name", "someone", "000001231", "12345")),
 	)
 	creditFile := NewFile(header, creditTxns)
 	creditFooter := FileFooter{

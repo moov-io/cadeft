@@ -21,7 +21,146 @@
 
 Moov's mission is to give developers an easy way to create and integrate bank processing into their own software products. Our open source projects are each focused on solving a single responsibility in financial services and designed around performance, scalability, and ease of use.
 
-Canadian Payments Association CPA-005 Layout is a 1464 byte file format used to transmit money between Canadian banks.
+## Description
+`cadeft` is a parser library designed for parsing and generating Electronic Funds Transfer (EFT) files adhereing to the [Payments Canada 005 specification](https://www.payments.ca/sites/default/files/standard005eng.pdf). 
+
+### Reading EFT files
+There are 2 options to read files either `cadeft.Reader` or `cadeft.FileStreamer`
+#### `cadeft.Reader`
+
+Reader will attempt to read all transactions from an EFT file and return a populated `cadeft.File` struct or a collection of errors encountered during parsing.
+```
+file, err := os.Open("./eft_file.txt")
+if err != nil {
+  return err
+}
+
+// Create a new reader passing an io.Reader
+reader := cadeft.NewReader(file)
+
+// attempt to read the file
+eftFile, err := reader.ReadFile()
+if err != nil {
+  return err
+}
+
+// print out all transers or handle the file
+for _, txn := range eftFile.Txns {
+  fmt.Printf("%+v", txn)
+}
+```
+
+#### `cadeft.FileStreamer`
+`cadeft.FileStreamer` will read one transaction from a file at a time or return an error. Consecutive calls to `ScanTxn()` will read the next transaction or return an error. `FileStreamer` will keep state of the parser's position and return new transactions every call. This allows the caller to either ignore errors that have surfaced when parsing/validating a transaction and construct their own array of `cadeft.Transaction` structs. You can also call `Validate()` on a `cadeft.Transaction` struct which will validate all fields against the Payments Canada 005 Spec. 
+```
+file, err := os.Open("./eft_file.txt")
+if err != nil {
+  return err
+}
+
+// instantiate a new FileStreamer
+stramer := cadeft.NewFileStreamer(file)
+
+// start reading the file
+for {
+  // every iteration a new transaction is returned or an error
+  txn, err := fileStreamer.ScanTxn()
+		if err != nil {
+            // an io.EOF is returned when parsing is complete
+			if err == io.EOF {
+				break
+			}
+
+            // handle the parse error as you want
+			var parseErr *cadeft.ParseError
+			if ok := errors.As(err, &parseErr); ok {
+				log.Err(parseErr).Msg("encountered parse error when processing incoming file")
+				continue
+			} else {
+				log.Err(err).Msg("fatal error when streaming transaction from file")
+				return err
+			}
+		}
+
+  // validate that the parsed txn is valid
+  err = txn.Validate()
+  if err != nil {
+    return err
+  }
+}
+
+```
+
+NOTE: Because `ScanTxn` keeps track of the parser's state it is not concurrency-safe if you want to incorporate some level of concurrency make sure the call to `ScanTxn()` is outside of a go routine like so:
+```
+...
+fileStreamer := cadeft.NewFileStreamer(file)
+
+wg := sync.WaitGroup{}
+batchSize := 10
+guard := make(chan struct{}, batchSize)
+
+for {
+  txn, err := fileStreamer.ScanTxn()
+  if err != nil {
+    // handle the error any which way you want
+  }
+
+  // read transactions into memory and concurrently handle each txn
+  guard <- struct{}{}
+  wg.Add(1)
+  go func() {
+    defer func() {
+      wg.Done()
+      <-guard
+    }()
+    // do your thing...
+  }
+  wg.Wait()
+}
+```
+
+## Write EFT Files
+To write an EFT file construct a `cadeft.File` struct with the appropriate `Header`, `Footer` and `[]Transactions`. You can confirm that your file is valid by calling `File.Validate()` or `Validate()` on the `Header`, `Footer` and each individual `Transaction`.
+```
+// create the file header
+header := cadeft.NewFileHeader("123456789", 1, time.Now(), int64(610), "CAD")
+
+// create a transaction, in this case it's a credit transaction
+txn := cadeft.NewTransaction(
+  cadeft.CreditRecord, // recod type
+  "450", // transaction code
+  420, // amount
+  Ptr(time.Now()), // date
+  "123456789", // institution ID
+  "12345", // account number
+  "222222222222222", // item trace nnumber
+  "payor name", // payor/payee name
+  "payor long name", // payor/payee long name
+  "987654321", // return institution ID
+  "54321", // return account number
+  "", // original item trace number (only used for returns)
+  cadeft.WithCrossRefNo("0000100000024"), // cross ref number (optional)
+)
+
+// create a new cadeft.File instance with header and txn
+file := cadeft.NewFile(header, cadeft.Transactions{txn})
+if err := file.Validate(); err != nil {
+  // file does not adhere to the 005 spec
+  return err
+}
+
+// serialize the file into payments canada 005 spec
+serializedFile, err := file.Create()
+if err != nil {
+  // error when writing the file
+  return err
+}
+
+// write the serialized string to a file or print it out
+fmt.Printf("%s", serializedFile)
+```
+
 
 ## Project status
 
