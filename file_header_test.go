@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
 )
 
@@ -27,7 +26,7 @@ func TestParseARecord(t *testing.T) {
 					OriginatorID:    "0000000610",
 					FileCreationNum: 1,
 				},
-				CreationDate:                   lo.ToPtr(time.Date(2023, time.May, 18, 0, 0, 0, 0, time.UTC)),
+				CreationDate:                   Ptr(time.Date(2023, time.May, 18, 0, 0, 0, 0, time.UTC)),
 				DestinationDataCenterNo:        61210,
 				DirectClearerCommunicationArea: "hello",
 				CurrencyCode:                   "CAD",

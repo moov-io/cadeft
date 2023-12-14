@@ -1,9 +1,9 @@
 package cadeft
 
 import (
+	"fmt"
 	"unicode"
 
-	"github.com/pkg/errors"
 	"golang.org/x/text/unicode/norm"
 
 	"golang.org/x/text/runes"
@@ -20,7 +20,7 @@ func normalize(in string) (string, error) {
 	}
 	for i := 0; i < len(s); i++ {
 		if s[i] > unicode.MaxASCII {
-			return "", errors.Errorf("failed to normalize rune %c", s[i])
+			return "", fmt.Errorf("failed to normalize rune %c", s[i])
 		}
 	}
 	return s, nil

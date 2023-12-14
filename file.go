@@ -7,8 +7,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-multierror"
-	"github.com/pkg/errors"
-	"github.com/samber/lo"
 )
 
 const (
@@ -77,7 +75,7 @@ func (f *File) Create() (string, error) {
 	var sb strings.Builder
 	currentLine := 1
 	if f.Header == nil {
-		return "", errors.New("file header is missing")
+		return "", fmt.Errorf("file header is missing")
 	}
 	serializedHeader, err := f.Header.buildHeader(currentLine)
 	if err != nil {
@@ -97,7 +95,7 @@ func (f *File) Create() (string, error) {
 		f.Footer.recordCount = int64(currentLine)
 		serializedFooter, err := f.Footer.Build()
 		if err != nil {
-			return "", errors.Wrap(err, "failed to build footer")
+			return "", fmt.Errorf("failed to build footer: %w", err)
 		}
 		sb.WriteString(serializedFooter)
 	} else {
@@ -197,7 +195,7 @@ func (f File) buildTransactions(recordHeader RecordHeader, currentLine *int) (st
 		recordHeader.RecordType = recType
 		entriesStr, err := f.buildTxnEntries(entries, recordHeader, currentLine)
 		if err != nil {
-			return "", errors.Wrap(err, "failed to build txn entries")
+			return "", fmt.Errorf("failed to build txn entries: %w", err)
 		}
 		if len(entriesStr) > 0 {
 			sb.WriteString(padStringWithBlanks(entriesStr, maxLineLength))
@@ -213,13 +211,13 @@ func (f File) buildTxnEntries(txns []Transaction, recordHeader RecordHeader, cur
 	recordHeader.recordCount = int64(*currentLine)
 	recordHeaderStr, err := recordHeader.buildRecordHeader()
 	if err != nil {
-		return "", errors.Wrap(err, "failed to create Txn RecordHeader")
+		return "", fmt.Errorf("failed to create Txn RecordHeader: %w", err)
 	}
 	// go through all the transactions and each line should contain at most 6 txns
 	for count, txn := range txns {
 		txnStr, err := txn.Build()
 		if err != nil {
-			return "", errors.Wrap(err, "failed to build transaction")
+			return "", fmt.Errorf("failed to build transaction: %w", err)
 		}
 		txnSb.WriteString(txnStr)
 		if (count+1)%maxTxnsPerRecord == 0 {
@@ -235,7 +233,7 @@ func (f File) buildTxnEntries(txns []Transaction, recordHeader RecordHeader, cur
 			recordHeader.recordCount = int64(*currentLine)
 			recordHeaderStr, err = recordHeader.buildRecordHeader()
 			if err != nil {
-				return "", errors.Wrap(err, "failed to create Txn RecordHeader")
+				return "", fmt.Errorf("failed to create Txn RecordHeader: %w", err)
 			}
 		}
 	}
@@ -265,7 +263,7 @@ func (f File) Validate() error {
 	for i, t := range f.Txns {
 		txnErr := t.Validate()
 		if txnErr != nil {
-			err = multierror.Append(err, errors.Wrapf(txnErr, "faild to validate txn %d", i))
+			err = multierror.Append(err, fmt.Errorf("faild to validate txn %d: %w", i, txnErr))
 		}
 	}
 	return err
@@ -290,17 +288,17 @@ func NewTransaction(
 	var txn Transaction
 	switch recordType {
 	case DebitRecord:
-		txn = lo.ToPtr(NewDebit(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, opts...))
+		txn = Ptr(NewDebit(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, opts...))
 	case CreditRecord:
-		txn = lo.ToPtr(NewCredit(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, opts...))
+		txn = Ptr(NewCredit(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, opts...))
 	case ReturnDebitRecord:
-		txn = lo.ToPtr(NewDebitReturn(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
+		txn = Ptr(NewDebitReturn(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
 	case ReturnCreditRecord:
-		txn = lo.ToPtr(NewCreditReturn(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
+		txn = Ptr(NewCreditReturn(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
 	case CreditReverseRecord:
-		txn = lo.ToPtr(NewCreditReverse(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
+		txn = Ptr(NewCreditReverse(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
 	case DebitReverseRecord:
-		txn = lo.ToPtr(NewDebitReverse(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
+		txn = Ptr(NewDebitReverse(txnType, amount, date, institutionID, payorPayeeAccountNo, itemTraceNo, originatorShortName, payorPayeeName, originatorLongName, originalOrReturnInstitutionID, originalOrReturnAccountNo, originalItemTraceNo, opts...))
 	case HeaderRecord, NoticeOfChangeRecord, NoticeOfChangeHeader, NoticeOfChangeFooter, FooterRecord:
 		return nil
 	}
@@ -317,15 +315,15 @@ func (f *Transactions) UnmarshalJSON(data []byte) error {
 
 		tMap, ok := t.(map[string]interface{})
 		if !ok {
-			return errors.New("failed to unmarshall transaction")
+			return fmt.Errorf("failed to unmarshall transaction")
 		}
 		rawRecordType, ok := tMap["type"]
 		if !ok {
-			return errors.New("failed to unmarshall transaction")
+			return fmt.Errorf("failed to unmarshall transaction")
 		}
 		recordType, ok := rawRecordType.(string)
 		if !ok {
-			return errors.New("failed to unmarshall transaction")
+			return fmt.Errorf("failed to unmarshall transaction")
 		}
 
 		jsonStr, err := json.Marshal(tMap)
@@ -399,6 +397,6 @@ func parseRecordType(t string) (RecordType, error) {
 	case "Z":
 		return FooterRecord, nil
 	default:
-		return "", errors.New(fmt.Sprintf("unrecognized record type: %s", t))
+		return "", fmt.Errorf(fmt.Sprintf("unrecognized record type: %s", t))
 	}
 }

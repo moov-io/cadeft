@@ -1,9 +1,8 @@
 package cadeft
 
 import (
+	"fmt"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 // FileFooter represents either Logical Record Type Z or V in the EFT 005 standard spec.
@@ -49,56 +48,56 @@ func NewFileFooter(recordHeader RecordHeader, txns []Transaction) *FileFooter {
 func (ff *FileFooter) Parse(line string) error {
 	var err error
 	if len(line) < zRecordMinLength {
-		return errors.New("footer is too short")
+		return fmt.Errorf("footer is too short")
 	}
 
 	recordHeader := RecordHeader{}
 	err = recordHeader.parse(line)
 	if err != nil {
-		return errors.Wrap(err, "failed to parse record header for footer")
+		return fmt.Errorf("failed to parse record header for footer: %w", err)
 	}
 	ff.RecordHeader = recordHeader
 	ff.TotalValueOfDebit, err = parseNum(line[24:38])
 	if err != nil {
-		return errors.Wrap(err, "failed to parse total value of debit")
+		return fmt.Errorf("failed to parse total value of debit: %w", err)
 	}
 	ff.TotalCountOfDebit, err = parseNum(line[38:46])
 	if err != nil {
-		return errors.Wrap(err, "failed to parse total count of debit")
+		return fmt.Errorf("failed to parse total count of debit: %w", err)
 	}
 	ff.TotalValueOfCredit, err = parseNum(line[46:60])
 	if err != nil {
-		return errors.Wrap(err, "failed to parse total value of credit")
+		return fmt.Errorf("failed to parse total value of credit: %w", err)
 	}
 	ff.TotalCountOfCredit, err = parseNum(line[60:68])
 	if err != nil {
-		return errors.Wrap(err, "failed to parse total count of credit")
+		return fmt.Errorf("failed to parse total count of credit: %w", err)
 	}
 	valERecordSegment := line[68:82]
 	if !isFillerString(valERecordSegment) {
 		if ff.TotalValueOfERecords, err = parseNum(valERecordSegment); err != nil {
-			return errors.Wrap(err, "failed to parse total value of E records")
+			return fmt.Errorf("failed to parse total value of E records: %w", err)
 		}
 	}
 
 	numERecordSegment := line[82:90]
 	if !isFillerString(numERecordSegment) {
 		if ff.TotalCountOfERecords, err = parseNum(numERecordSegment); err != nil {
-			return errors.Wrap(err, "failed to parse total count of E records")
+			return fmt.Errorf("failed to parse total count of E records: %w", err)
 		}
 	}
 
 	valFRecordsSegment := line[90:104]
 	if !isFillerString(valFRecordsSegment) {
 		if ff.TotalValueOfFRecords, err = parseNum(line[90:104]); err != nil {
-			return errors.Wrap(err, "failed to parse total value of F records")
+			return fmt.Errorf("failed to parse total value of F records: %w", err)
 		}
 	}
 
 	numFRecordSegment := line[104:112]
 	if !isFillerString(numFRecordSegment) {
 		if ff.TotalCountOfFRecords, err = parseNum(line[104:112]); err != nil {
-			return errors.Wrap(err, "failed to parse totoal count of F records")
+			return fmt.Errorf("failed to parse totoal count of F records: %w", err)
 		}
 	}
 
@@ -110,7 +109,7 @@ func (ff FileFooter) Build() (string, error) {
 	var sb strings.Builder
 	serializedHeader, err := ff.RecordHeader.buildRecordHeader()
 	if err != nil {
-		return "", errors.Wrap(err, "failed to write record header")
+		return "", fmt.Errorf("failed to write record header: %w", err)
 	}
 	sb.WriteString(serializedHeader)
 	sb.WriteString(convertNumToZeroPaddedString(ff.TotalValueOfDebit, 14))

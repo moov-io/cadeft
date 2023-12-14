@@ -1,10 +1,9 @@
 package cadeft
 
 import (
+	"fmt"
 	"strings"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // FileHeader represents Logical Record Type A in the EFT 005 spec.
@@ -55,21 +54,21 @@ func (fh *FileHeader) parse(line string) error {
 	var err error
 	recordHeader := RecordHeader{}
 	if len(line) < aRecordMinLength {
-		return errors.New("invalid header record length")
+		return fmt.Errorf("invalid header record length")
 	}
 	err = recordHeader.parse(line)
 	if err != nil {
-		return errors.Wrap(err, "failed to parse record header")
+		return fmt.Errorf("failed to parse record header: %w", err)
 	}
 	fh.RecordHeader = recordHeader
 	creationDate, err := parseDate(line[24:30])
 	if err != nil {
-		return errors.Wrap(err, "failed to parse creation date for file header")
+		return fmt.Errorf("failed to parse creation date for file header: %w", err)
 	}
 	fh.CreationDate = &creationDate
 	fh.DestinationDataCenterNo, err = parseNum(line[30:35])
 	if err != nil {
-		return errors.Wrap(err, "failed to parse destination data center for file header")
+		return fmt.Errorf("failed to parse destination data center for file header: %w", err)
 	}
 	fh.DirectClearerCommunicationArea = strings.TrimSpace(line[35:55])
 
@@ -91,7 +90,7 @@ func (fh FileHeader) buildHeader(currRecordCount int) (string, error) {
 
 	rh, err := fh.RecordHeader.buildRecordHeader()
 	if err != nil {
-		return "", errors.Wrap(err, "failed to write record header for file header")
+		return "", fmt.Errorf("failed to write record header for file header: %w", err)
 	}
 	sb.WriteString(rh)
 	if fh.CreationDate != nil {
