@@ -176,6 +176,11 @@ Z0000000040000000001000100000000007000000000070000000000000000000000000000000000
 	}
 	debitFile.Footer = &debitFooter
 
+	require.Len(t, debitFile.GetAllDebitTxns(), 7)
+	require.Len(t, debitFile.GetAllCredits(), 0)
+	require.Len(t, debitFile.GetAllDebitReturns(), 0)
+	require.Len(t, debitFile.GetAllCreditReturns(), 0)
+
 	rawCreditsFile := `A0000000010000000001000102327512345                    CAD
 C00000000200000000010001450000000100002327512345678912345       0000000000000012313213000short name     payee name                    someone                                                    00000123112345                                              00000000000450000000100002327512345678912345       0000000000000012313213000short name     payee name                    someone                                                    00000123112345                                              00000000000450000000100002327512345678912345       0000000000000012313213000short name     payee name                    someone                                                    00000123112345                                              00000000000450000000100002327512345678912345       0000000000000012313213000short name     payee name                    someone                                                    00000123112345                                              00000000000450000000100002327512345678912345       0000000000000012313213000short name     payee name                    someone                                                    00000123112345                                              00000000000450000000100002327512345678912345       0000000000000012313213000short name     payee name                    someone                                                    00000123112345                                              00000000000
 C00000000300000000010001450000000100002327512345678912345       0000000000000012313213000short name     payee name                    someone                                                    00000123112345                                              00000000000                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
@@ -203,6 +208,11 @@ Z0000000040000000001000100000000000000000000000000000000700000000007000000000000
 	}
 	creditFile.Footer = &creditFooter
 
+	require.Len(t, creditFile.GetAllDebitTxns(), 0)
+	require.Len(t, creditFile.GetAllCredits(), 7)
+	require.Len(t, creditFile.GetAllDebitReturns(), 0)
+	require.Len(t, creditFile.GetAllCreditReturns(), 0)
+
 	rawCreditAndDebitFile := `A0000000010000000001000102327512345                    CAD
 C00000000200000000010001450000000100002327512345678912345       0000000000000012313213000short name     payee name                    someone                                                    00000123112345                                              00000000000450000000100002327512345678912345       0000000000000012313213000short name     payee name                    someone                                                    00000123112345                                              00000000000450000000100002327512345678912345       0000000000000012313213000short name     payee name                    someone                                                    00000123112345                                              00000000000450000000100002327512345678912345       0000000000000012313213000short name     payee name                    someone                                                    00000123112345                                              00000000000450000000100002327512345678912345       0000000000000012313213000short name     payee name                    someone                                                    00000123112345                                              00000000000450000000100002327512345678912345       0000000000000012313213000short name     payee name                    someone                                                    00000123112345                                              00000000000
 C00000000300000000010001450000000100002327512345678912345       0000000000000012313213000short name     payee name                    someone                                                    00000123112345                                              00000000000                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
@@ -224,6 +234,11 @@ Z0000000060000000001000100000000014000000000070000000001400000000007000000000000
 		TotalCountOfCredit: 7,
 	}
 	creditsAndDebitFile.Footer = &creditsAndDebitsFooter
+
+	require.Len(t, creditFile.GetAllDebitTxns(), 0)
+	require.Len(t, creditFile.GetAllCredits(), 7)
+	require.Len(t, creditFile.GetAllDebitReturns(), 0)
+	require.Len(t, creditFile.GetAllCreditReturns(), 0)
 
 	cases := map[string]testCase{
 		"debit file": {
