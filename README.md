@@ -22,14 +22,14 @@
 Moov's mission is to give developers an easy way to create and integrate bank processing into their own software products. Our open source projects are each focused on solving a single responsibility in financial services and designed around performance, scalability, and ease of use.
 
 ## Description
-`cadeft` is a parser library designed for parsing and generating Electronic Funds Transfer (EFT) files adhereing to the [Payments Canada 005 specification](https://www.payments.ca/sites/default/files/standard005eng.pdf). 
+`cadeft` is a parser library designed for parsing and generating Electronic Funds Transfer (EFT) files adhereing to the [Payments Canada 005 specification](https://www.payments.ca/sites/default/files/standard005eng.pdf).
 
 ### Reading EFT files
 There are 2 options to read files either `cadeft.Reader` or `cadeft.FileStreamer`
 #### `cadeft.Reader`
 
 Reader will attempt to read all transactions from an EFT file and return a populated `cadeft.File` struct or a collection of errors encountered during parsing.
-```
+```go
 file, err := os.Open("./eft_file.txt")
 if err != nil {
   return err
@@ -51,8 +51,8 @@ for _, txn := range eftFile.Txns {
 ```
 
 #### `cadeft.FileStreamer`
-`cadeft.FileStreamer` will read one transaction from a file at a time or return an error. Consecutive calls to `ScanTxn()` will read the next transaction or return an error. `FileStreamer` will keep state of the parser's position and return new transactions every call. This allows the caller to either ignore errors that have surfaced when parsing/validating a transaction and construct their own array of `cadeft.Transaction` structs. You can also call `Validate()` on a `cadeft.Transaction` struct which will validate all fields against the Payments Canada 005 Spec. 
-```
+`cadeft.FileStreamer` will read one transaction from a file at a time or return an error. Consecutive calls to `ScanTxn()` will read the next transaction or return an error. `FileStreamer` will keep state of the parser's position and return new transactions every call. This allows the caller to either ignore errors that have surfaced when parsing/validating a transaction and construct their own array of `cadeft.Transaction` structs. You can also call `Validate()` on a `cadeft.Transaction` struct which will validate all fields against the Payments Canada 005 Spec.
+```go
 file, err := os.Open("./eft_file.txt")
 if err != nil {
   return err
@@ -92,7 +92,7 @@ for {
 ```
 
 NOTE: Because `ScanTxn` keeps track of the parser's state it is not concurrency-safe if you want to incorporate some level of concurrency make sure the call to `ScanTxn()` is outside of a go routine like so:
-```
+```go
 ...
 fileStreamer := cadeft.NewFileStreamer(file)
 
@@ -122,7 +122,7 @@ for {
 
 ## Write EFT Files
 To write an EFT file construct a `cadeft.File` struct with the appropriate `Header`, `Footer` and `[]Transactions`. You can confirm that your file is valid by calling `File.Validate()` or `Validate()` on the `Header`, `Footer` and each individual `Transaction`.
-```
+```go
 // create the file header
 header := cadeft.NewFileHeader("123456789", 1, time.Now(), int64(610), "CAD")
 
