@@ -57,12 +57,11 @@ func convertNumToZeroPaddedString(in int64, requiredLength int) string {
 }
 
 // default length of date string in eft format is 6 0yyddd
-// this function assumes that the year will always be in the 20's (2010, 2020, 2050 etc.)
 func convertTimestampToEftDate(in time.Time) string {
 	year := in.Year() % 100
 	day := in.YearDay()
 
-	return fmt.Sprintf("0%d%d", year, day)
+	return fmt.Sprintf("%03d%03d", year, day)
 }
 
 func isFillerString(s string) bool {
