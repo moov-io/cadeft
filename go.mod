@@ -3,7 +3,7 @@ module github.com/moov-io/cadeft
 go 1.20
 
 require (
-	github.com/go-playground/validator/v10 v10.16.0
+	github.com/go-playground/validator/v10 v10.17.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/text v0.14.0
