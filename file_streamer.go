@@ -116,7 +116,7 @@ func (fs *FileStreamer) ScanTxn() (Transaction, error) {
 
 		line, err := normalize(strings.TrimSpace(fs.scanner.Text()))
 		if err != nil {
-			return nil, fmt.Errorf("failed read transaction line: %w", err)
+			return nil, fmt.Errorf("failed to read transaction line: %w", err)
 		}
 
 		fs.lineContents = line
