@@ -113,7 +113,13 @@ func (fs *FileStreamer) ScanTxn() (Transaction, error) {
 			return nil, io.EOF
 		}
 		fs.currentLine++
-		fs.lineContents = strings.TrimSpace(fs.scanner.Text())
+
+		line, err := normalize(strings.TrimSpace(fs.scanner.Text()))
+		if err != nil {
+			return nil, fmt.Errorf("failed to read transaction line: %w", err)
+		}
+
+		fs.lineContents = line
 
 		if len(fs.lineContents) == 0 || isFooterRecord(string(fs.lineContents[0])) {
 			return nil, io.EOF

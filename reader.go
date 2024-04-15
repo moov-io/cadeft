@@ -22,7 +22,10 @@ func NewReader(in io.Reader) *Reader {
 // Use the FileStreamer object to be able ignore errors and proceed parsing the file.
 func (r *Reader) ReadFile() (File, error) {
 	for r.scanner.Scan() {
-		line := r.scanner.Text()
+		line, err := normalize(r.scanner.Text())
+		if err != nil {
+			return File{}, fmt.Errorf("failed to read line: %w", err)
+		}
 		recordType := line[:1]
 		if recordType == string(HeaderRecord) {
 			if err := r.parseARecord(line); err != nil {
@@ -96,7 +99,19 @@ func (r *Reader) parseTxnRecord(data string) error {
 				return fmt.Errorf("failed to parse credit return transaction: %w", err)
 			}
 			r.File.Txns = append(r.File.Txns, &creditReturns)
-		case HeaderRecord, FooterRecord, CreditReverseRecord, DebitReverseRecord, NoticeOfChangeRecord, NoticeOfChangeHeader, NoticeOfChangeFooter:
+		case CreditReverseRecord:
+			creditReverse := CreditReverse{}
+			if err := creditReverse.Parse(rawTxnSegment[startIdx:endIdx]); err != nil {
+				return fmt.Errorf("failed to parse credit reverse transaction: %w", err)
+			}
+			r.File.Txns = append(r.File.Txns, &creditReverse)
+		case DebitReverseRecord:
+			debitReverseRecord := DebitReverse{}
+			if err := debitReverseRecord.Parse(rawTxnSegment[startIdx:endIdx]); err != nil {
+				return fmt.Errorf("failed to parse debit reverse transaction: %w", err)
+			}
+			r.File.Txns = append(r.File.Txns, &debitReverseRecord)
+		case HeaderRecord, FooterRecord, NoticeOfChangeRecord, NoticeOfChangeHeader, NoticeOfChangeFooter:
 			return fmt.Errorf("unexpected %s record", recType)
 		}
 		startIdx = endIdx
