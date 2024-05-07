@@ -181,11 +181,13 @@ func (fs *FileStreamer) ScanTxn() (Transaction, error) {
 		if err := cr.Parse(txnsSegment[startIdx:endIdx]); err != nil {
 			return nil, newStreamParseError(err, string(CreditReverseRecord), fs.currentTxn, fs.currentLine)
 		}
+		txn = &cr
 	case DebitReverseRecord:
 		dr := DebitReverse{}
 		if err := dr.Parse(txnsSegment[startIdx:endIdx]); err != nil {
 			return nil, newStreamParseError(err, string(DebitReverseRecord), fs.currentTxn, fs.currentLine)
 		}
+		txn = &dr
 	case HeaderRecord, NoticeOfChangeRecord, NoticeOfChangeHeader, NoticeOfChangeFooter, FooterRecord:
 		return nil, fmt.Errorf("invalid record type: %v", recordType)
 	}
