@@ -94,7 +94,7 @@ func (c CreditReturn) Build() (string, error) {
 	sb.WriteString(abreviateStringToLength(c.SundryInfo, 15))
 	sb.WriteString(padNumericStringWithZeros(c.OriginalItemTraceNo, 22))
 	sb.WriteString(abreviateStringToLength(c.SettlementCode, 2))
-	sb.WriteString(padNumericStringWithZeros(c.InvalidDataElementID, 11))
+	sb.WriteString(padNumericStringWithTrailingZeros(c.InvalidDataElementID, 11))
 	return sb.String(), nil
 }
 
