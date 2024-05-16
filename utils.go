@@ -98,6 +98,13 @@ func padNumericStringWithZeros(s string, reqLength int) string {
 	return fmt.Sprintf("%0*s", reqLength, s)
 }
 
+func padNumericStringWithTrailingZeros(s string, reqLength int) string {
+	if len(s) >= reqLength {
+		return s
+	}
+	return fmt.Sprintf("%s%0*s", s, reqLength-len(s), "0")
+}
+
 func isTxnRecord(t string) bool {
 	switch t {
 	case "D", "C", "E", "F", "I", "J":

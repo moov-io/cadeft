@@ -76,8 +76,8 @@ func TestBuildCreditReverse(t *testing.T) {
 	date := time.Date(2023, 8, 29, 0, 0, 0, 0, time.UTC)
 	cases := map[string]testCase{
 		"happy path": {
-			in:             NewCreditReverse("400", 999, &date, "123456789", "123456789012", "0000000000000000000000", "SHORT-NAME", "RECEIVER NAME", "LONG-NAME", "123456789", "210987654321", "040201", WithUserID("54321"), WithCrossRefNo("123"), WithSettlementCode("01")),
-			expectedOutput: "40000000009990232411234567891234567890120000000000000000000000000SHORT-NAME     RECEIVER NAME                 LONG-NAME                     54321     123                123456789210987654321               00000000000000000402010100000000000",
+			in:             NewCreditReverse("400", 999, &date, "123456789", "123456789012", "0000000000000000000000", "SHORT-NAME", "RECEIVER NAME", "LONG-NAME", "123456789", "210987654321", "040201", WithUserID("54321"), WithCrossRefNo("123"), WithSettlementCode("01"), WithInvalidDataElementID("19")),
+			expectedOutput: "40000000009990232411234567891234567890120000000000000000000000000SHORT-NAME     RECEIVER NAME                 LONG-NAME                     54321     123                123456789210987654321               00000000000000000402010119000000000",
 		},
 		"default fields": {
 			in:             CreditReverse{},

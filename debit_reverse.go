@@ -130,7 +130,7 @@ func (d DebitReverse) Build() (string, error) {
 	sb.WriteString(abreviateStringToLength(d.SundryInfo, 15))
 	sb.WriteString(padNumericStringWithZeros(d.OriginalItemTraceNo, 22))
 	sb.WriteString(abreviateStringToLength(d.SettlementCode, 2))
-	sb.WriteString(padNumericStringWithZeros(d.InvalidDataElementID, 11))
+	sb.WriteString(padNumericStringWithTrailingZeros(d.InvalidDataElementID, 11))
 	return sb.String(), nil
 }
 
