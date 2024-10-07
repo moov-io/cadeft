@@ -397,6 +397,6 @@ func parseRecordType(t string) (RecordType, error) {
 	case "Z":
 		return FooterRecord, nil
 	default:
-		return "", fmt.Errorf(fmt.Sprintf("unrecognized record type: %s", t))
+		return "", fmt.Errorf("unrecognized record type: %s", t)
 	}
 }

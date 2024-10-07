@@ -31,7 +31,7 @@ func convertRecordType(recType string) (RecordType, error) {
 	case "Z":
 		return FooterRecord, nil
 	default:
-		return "", fmt.Errorf(fmt.Sprintf("unrecognized record type %s", recType))
+		return "", fmt.Errorf("unrecognized record type %s", recType)
 	}
 }
 

@@ -13,7 +13,7 @@ func (p *ParseError) Error() string {
 	if p.Err != nil {
 		return fmt.Errorf("%s: %w", p.Msg, p.Err).Error()
 	} else {
-		return fmt.Errorf(p.Msg).Error()
+		return p.Msg
 	}
 }
 
