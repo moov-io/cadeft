@@ -11,7 +11,7 @@ func TestParseCreditTxn(t *testing.T) {
 	type testCase struct {
 		in          string
 		expectedTxn Credit
-		expectErr   error
+		expectErr   any
 	}
 	r := require.New(t)
 	cases := map[string]testCase{
@@ -190,7 +190,7 @@ func TestValidateCreditTxn(t *testing.T) {
 			if tc.noError {
 				r.NoError(err)
 			} else {
-				r.NotNil(err)
+				r.Error(err)
 			}
 		})
 	}

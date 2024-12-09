@@ -2,6 +2,7 @@ package cadeft
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -75,7 +76,7 @@ func (f *File) Create() (string, error) {
 	var sb strings.Builder
 	currentLine := 1
 	if f.Header == nil {
-		return "", fmt.Errorf("file header is missing")
+		return "", errors.New("file header is missing")
 	}
 	serializedHeader, err := f.Header.buildHeader(currentLine)
 	if err != nil {
@@ -315,15 +316,15 @@ func (f *Transactions) UnmarshalJSON(data []byte) error {
 
 		tMap, ok := t.(map[string]interface{})
 		if !ok {
-			return fmt.Errorf("failed to unmarshall transaction")
+			return errors.New("failed to unmarshall transaction")
 		}
 		rawRecordType, ok := tMap["type"]
 		if !ok {
-			return fmt.Errorf("failed to unmarshall transaction")
+			return errors.New("failed to unmarshall transaction")
 		}
 		recordType, ok := rawRecordType.(string)
 		if !ok {
-			return fmt.Errorf("failed to unmarshall transaction")
+			return errors.New("failed to unmarshall transaction")
 		}
 
 		jsonStr, err := json.Marshal(tMap)

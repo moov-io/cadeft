@@ -1,6 +1,7 @@
 package cadeft
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -37,9 +38,9 @@ func convertRecordType(recType string) (RecordType, error) {
 
 func parseDate(date string) (time.Time, error) {
 	if len(date) != 6 {
-		return time.Time{}, fmt.Errorf("date string is not valid length")
+		return time.Time{}, errors.New("date string is not valid length")
 	}
-	year, err := strconv.Atoi(fmt.Sprintf("20%s", date[1:3]))
+	year, err := strconv.Atoi("20" + date[1:3])
 	if err != nil {
 		return time.Time{}, fmt.Errorf("failed to convert year: %w", err)
 	}

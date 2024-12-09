@@ -12,7 +12,7 @@ func TestParseCreditReverse(t *testing.T) {
 	type testCase struct {
 		in          string
 		expectedTxn CreditReverse
-		expectErr   error
+		expectErr   any
 	}
 	cases := map[string]testCase{
 		"regular txn": {

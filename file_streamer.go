@@ -2,6 +2,7 @@ package cadeft
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -43,7 +44,7 @@ func (fs FileStreamer) GetHeader() (*FileHeader, error) {
 
 	line := scanner.Text()
 	if len(line) == 0 {
-		return nil, fmt.Errorf("file header is empty")
+		return nil, errors.New("file header is empty")
 	}
 
 	recType, err := parseRecordType(string(line[0]))
@@ -51,7 +52,7 @@ func (fs FileStreamer) GetHeader() (*FileHeader, error) {
 		return nil, fmt.Errorf("file header not found: %w", err)
 	}
 	if recType != HeaderRecord {
-		return nil, fmt.Errorf("first record in file is not a header record")
+		return nil, errors.New("first record in file is not a header record")
 	}
 	header := &FileHeader{}
 	err = header.parse(line)
@@ -71,7 +72,7 @@ func (fs FileStreamer) GetFooter() (*FileFooter, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		if len(line) < 1 {
-			return nil, fmt.Errorf("line too short to determine record type")
+			return nil, errors.New("line too short to determine record type")
 		}
 		recType := line[:1]
 		if recType == string(FooterRecord) {
@@ -82,7 +83,7 @@ func (fs FileStreamer) GetFooter() (*FileFooter, error) {
 			return ff, nil
 		}
 	}
-	return nil, fmt.Errorf("failed to find footer record")
+	return nil, errors.New("failed to find footer record")
 }
 
 // ScanTxn parses transaction records (D, C, I, J, E and F logical records) one at a time. Upon successfully parsing a transaction segment a Transaction struct is returned otherwise a non nil error is returned in
@@ -99,7 +100,7 @@ func (fs *FileStreamer) ScanTxn() (Transaction, error) {
 
 		}
 		if len(fs.scanner.Text()) == 0 || !isHeaderRecordType(string(fs.scanner.Text()[0])) {
-			return nil, fmt.Errorf("first line in file is not a header record")
+			return nil, errors.New("first line in file is not a header record")
 		}
 		fs.currentLine++
 	}

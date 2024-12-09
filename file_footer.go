@@ -1,6 +1,7 @@
 package cadeft
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -48,7 +49,7 @@ func NewFileFooter(recordHeader RecordHeader, txns []Transaction) *FileFooter {
 func (ff *FileFooter) Parse(line string) error {
 	var err error
 	if len(line) < zRecordMinLength {
-		return fmt.Errorf("footer is too short")
+		return errors.New("footer is too short")
 	}
 
 	recordHeader := RecordHeader{}

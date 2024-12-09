@@ -11,7 +11,7 @@ func TestParseReturnCredit(t *testing.T) {
 	type testCase struct {
 		in          string
 		expectedTxn CreditReturn
-		expectErr   error
+		expectErr   any
 	}
 	r := require.New(t)
 	cases := map[string]testCase{

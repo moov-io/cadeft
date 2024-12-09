@@ -1,6 +1,7 @@
 package cadeft
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -54,7 +55,7 @@ func (fh *FileHeader) parse(line string) error {
 	var err error
 	recordHeader := RecordHeader{}
 	if len(line) < aRecordMinLength {
-		return fmt.Errorf("invalid header record length")
+		return errors.New("invalid header record length")
 	}
 	err = recordHeader.parse(line)
 	if err != nil {

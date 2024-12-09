@@ -11,7 +11,7 @@ func TestParseReturnDebitTxn(t *testing.T) {
 	type testCase struct {
 		in          string
 		expectedTxn DebitReturn
-		expectErr   error
+		expectErr   any
 	}
 	r := require.New(t)
 	cases := map[string]testCase{

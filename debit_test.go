@@ -11,7 +11,7 @@ func TestParseDebitTxn(t *testing.T) {
 	type testCase struct {
 		in          string
 		expectedTxn Debit
-		expectErr   error
+		expectErr   any
 	}
 	r := require.New(t)
 	cases := map[string]testCase{
@@ -58,7 +58,6 @@ func TestParseDebitTxn(t *testing.T) {
 			err := debit.Parse(tc.in)
 			if tc.expectErr != nil {
 				r.ErrorAs(err, &tc.expectErr)
-				t.Logf("%v", tc.expectErr)
 			} else {
 				r.Equal(tc.expectedTxn, debit)
 			}

@@ -1,7 +1,6 @@
 package cadeft
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 
@@ -60,6 +59,6 @@ func TestBuildFileFooter(t *testing.T) {
 	r.Equal(int64(2), ff.TotalCountOfDebit)
 	s, err := ff.Build()
 	r.NoError(err)
-	expectedFile := fmt.Sprintf("Z000000000000000061000010000000000200000000002000000000020000000000200000000000000000000000000000000000000000000%s", strings.Repeat(" ", 1352))
+	expectedFile := "Z000000000000000061000010000000000200000000002000000000020000000000200000000000000000000000000000000000000000000" + strings.Repeat(" ", 1352)
 	r.Equal(expectedFile, s)
 }
