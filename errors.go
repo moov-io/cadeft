@@ -1,6 +1,7 @@
 package cadeft
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -49,16 +50,16 @@ func NewValidationError(err error) error {
 
 var (
 	// parse errors
-	ErrInvalidRecordLength = fmt.Errorf("transaction record is not 240 characters")
+	ErrInvalidRecordLength = errors.New("transaction record is not 240 characters")
 	// Validation errors
-	ErrMissingOriginatorId                   = fmt.Errorf("missing originator ID")
-	ErrMissingCreationDate                   = fmt.Errorf("missing creation date")
-	ErrInvalidRecordType                     = fmt.Errorf("invalid record type")
-	ErrInvalidCurrencyCode                   = fmt.Errorf("invalid currency code")
-	ErrInvalidOriginatorIdLength             = fmt.Errorf("invalid originator ID length")
-	ErrInvalidOriginatorId                   = fmt.Errorf("invalid originator ID not alpha numeric")
-	ErrInvalidFileCreationNum                = fmt.Errorf("invalid file creation number")
-	ErrInvalidDestinationDataCenterNo        = fmt.Errorf("invalid destination data center")
-	ErrInvalidDirectClearerCommunicationArea = fmt.Errorf("invalid direct clearer communication area")
-	ErrScanParseError                        = fmt.Errorf("failed to parse txn")
+	ErrMissingOriginatorId                   = errors.New("missing originator ID")
+	ErrMissingCreationDate                   = errors.New("missing creation date")
+	ErrInvalidRecordType                     = errors.New("invalid record type")
+	ErrInvalidCurrencyCode                   = errors.New("invalid currency code")
+	ErrInvalidOriginatorIdLength             = errors.New("invalid originator ID length")
+	ErrInvalidOriginatorId                   = errors.New("invalid originator ID not alpha numeric")
+	ErrInvalidFileCreationNum                = errors.New("invalid file creation number")
+	ErrInvalidDestinationDataCenterNo        = errors.New("invalid destination data center")
+	ErrInvalidDirectClearerCommunicationArea = errors.New("invalid direct clearer communication area")
+	ErrScanParseError                        = errors.New("failed to parse txn")
 )

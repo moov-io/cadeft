@@ -2,6 +2,7 @@ package cadeft
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -46,7 +47,7 @@ func (r *Reader) ReadFile() (File, error) {
 
 func (r *Reader) parseARecord(data string) error {
 	if len(data) < aRecordMinLength {
-		return fmt.Errorf("record type A is not required length")
+		return errors.New("record type A is not required length")
 	}
 	fHeader := &FileHeader{}
 	if err := fHeader.parse(data); err != nil {
@@ -122,7 +123,7 @@ func (r *Reader) parseTxnRecord(data string) error {
 
 func (r *Reader) parseZRecord(data string) error {
 	if len(data) < zRecordMinLength {
-		return fmt.Errorf("z record does not contain minimum amount of data")
+		return errors.New("z record does not contain minimum amount of data")
 	}
 
 	footer := &FileFooter{}

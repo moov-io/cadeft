@@ -52,7 +52,7 @@ func TestStreamGetHeader(t *testing.T) {
 				r.NotNil(header)
 				r.Equal(tc.expectedHeader, *header)
 			} else {
-				r.NotNil(err)
+				r.Error(err)
 			}
 
 		})
@@ -105,7 +105,7 @@ func TestStreamGetFooter(t *testing.T) {
 				r.NotNil(footer)
 				r.Equal(tc.expectedFooter, *footer)
 			} else {
-				r.NotNil(err)
+				r.Error(err)
 			}
 
 		})
