@@ -8,7 +8,7 @@ require (
 	github.com/go-playground/validator/v10 v10.30.1
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/stretchr/testify v1.11.1
-	golang.org/x/text v0.32.0
+	golang.org/x/text v0.33.0
 )
 
 require (
