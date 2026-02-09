@@ -2,13 +2,13 @@ module github.com/moov-io/cadeft
 
 go 1.24.0
 
-toolchain go1.25.5
+toolchain go1.25.7
 
 require (
 	github.com/go-playground/validator/v10 v10.30.1
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/stretchr/testify v1.11.1
-	golang.org/x/text v0.33.0
+	golang.org/x/text v0.34.0
 )
 
 require (
