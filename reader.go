@@ -27,6 +27,9 @@ func (r *Reader) ReadFile() (File, error) {
 		if err != nil {
 			return File{}, fmt.Errorf("failed to read line: %w", err)
 		}
+		if len(line) == 0 {
+			continue
+		}
 		recordType := line[:1]
 		if recordType == string(HeaderRecord) {
 			if err := r.parseARecord(line); err != nil {
@@ -58,6 +61,9 @@ func (r *Reader) parseARecord(data string) error {
 }
 
 func (r *Reader) parseTxnRecord(data string) error {
+	if len(data) < commonRecordDataLength {
+		return fmt.Errorf("txn record shorter than common header length %d: got %d", commonRecordDataLength, len(data))
+	}
 	if len(data[commonRecordDataLength:])%segmentLength != 0 {
 		return fmt.Errorf("record length is not valid multiple of 260, partial txn: %d", len(data[commonRecordDataLength:]))
 	}

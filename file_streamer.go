@@ -126,12 +126,20 @@ func (fs *FileStreamer) ScanTxn() (Transaction, error) {
 			return nil, io.EOF
 		}
 
+		if len(fs.lineContents) < commonRecordDataLength {
+			return nil, fmt.Errorf("txn record at line %d shorter than common header length %d", fs.currentLine, commonRecordDataLength)
+		}
+
 		if len(fs.lineContents[commonRecordDataLength:])%segmentLength != 0 {
 			return nil, fmt.Errorf("txn record at line %d is not of correct length", fs.currentLine)
 		}
 
 		fs.numTxnsPerLine = len(fs.lineContents[commonRecordDataLength:]) / segmentLength
 
+	}
+
+	if len(fs.lineContents) < 1 {
+		return nil, io.EOF
 	}
 
 	recordType, err := parseRecordType(fs.lineContents[:1])
@@ -146,9 +154,15 @@ func (fs *FileStreamer) ScanTxn() (Transaction, error) {
 	defer fs.incrementTxnCount()
 
 	// determine starting index and ending index from currentTxn
+	if len(fs.lineContents) < commonRecordDataLength {
+		return nil, fmt.Errorf("txn record at line %d shorter than common header length %d", fs.currentLine, commonRecordDataLength)
+	}
 	txnsSegment := fs.lineContents[commonRecordDataLength:]
 	startIdx := segmentLength * fs.currentTxn
 	endIdx := segmentLength * (fs.currentTxn + 1)
+	if endIdx > len(txnsSegment) {
+		return nil, fmt.Errorf("txn segment bounds out of range at line %d", fs.currentLine)
+	}
 
 	var txn Transaction
 	switch recordType {
