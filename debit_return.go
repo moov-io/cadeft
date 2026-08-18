@@ -103,34 +103,35 @@ func (d DebitReturn) Build() (string, error) {
 // The data passed in should be of length 240, the transaction length associated with the EFT file spec.
 func (d *DebitReturn) Parse(data string) error {
 	var err error
-	if len(data) != segmentLength {
+	rs := []rune(data)
+	if len(rs) != segmentLength {
 		return NewParseError(ErrInvalidRecordLength, "")
 	}
-	d.TxnType = TransactionType(data[:3])
-	d.Amount, err = parseNum(data[3:13])
+	d.TxnType = TransactionType(string(rs[:3]))
+	d.Amount, err = parseNum(string(rs[3:13]))
 	if err != nil {
 		return NewParseError(err, "failed to parse amount")
 	}
-	dueDate, err := parseDate(data[13:19])
+	dueDate, err := parseDate(string(rs[13:19]))
 	if err != nil {
 		return NewParseError(err, "failed to parse due date")
 	}
 	d.DueDate = &dueDate
-	d.InstitutionID = data[19:28]
-	d.PayorAccountNo = strings.TrimSpace(data[28:40])
-	d.ItemTraceNo = data[40:62]
-	d.StoredTransactionType = TransactionType(data[62:65])
-	d.OriginatorShortName = strings.TrimSpace(data[65:80])
-	d.PayorName = strings.TrimSpace(data[80:110])
-	d.OriginatorLongName = strings.TrimSpace(data[110:140])
-	d.UserID = strings.TrimSpace(data[140:150])
-	d.CrossRefNo = strings.TrimSpace(data[150:169])
-	d.OriginalInstitutionID = strings.TrimSpace(data[169:178])
-	d.OriginalAccountNo = strings.TrimSpace(data[178:190])
-	d.SundryInfo = strings.TrimSpace(data[190:205])
-	d.OriginalItemTraceNo = strings.TrimSpace(data[205:227])
-	d.SettlementCode = strings.TrimSpace(data[227:229])
-	d.InvalidDataElementID = strings.TrimSpace(data[229:240])
+	d.InstitutionID = string(rs[19:28])
+	d.PayorAccountNo = strings.TrimSpace(string(rs[28:40]))
+	d.ItemTraceNo = string(rs[40:62])
+	d.StoredTransactionType = TransactionType(string(rs[62:65]))
+	d.OriginatorShortName = strings.TrimSpace(string(rs[65:80]))
+	d.PayorName = strings.TrimSpace(string(rs[80:110]))
+	d.OriginatorLongName = strings.TrimSpace(string(rs[110:140]))
+	d.UserID = strings.TrimSpace(string(rs[140:150]))
+	d.CrossRefNo = strings.TrimSpace(string(rs[150:169]))
+	d.OriginalInstitutionID = strings.TrimSpace(string(rs[169:178]))
+	d.OriginalAccountNo = strings.TrimSpace(string(rs[178:190]))
+	d.SundryInfo = strings.TrimSpace(string(rs[190:205]))
+	d.OriginalItemTraceNo = strings.TrimSpace(string(rs[205:227]))
+	d.SettlementCode = strings.TrimSpace(string(rs[227:229]))
+	d.InvalidDataElementID = strings.TrimSpace(string(rs[229:240]))
 	d.RecordType = ReturnDebitRecord
 	return nil
 }
