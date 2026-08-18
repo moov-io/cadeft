@@ -59,33 +59,34 @@ func NewCreditReverse(
 // The data passed in should be of length 240, the transaction length associated with the EFT file spec.
 func (c *CreditReverse) Parse(data string) error {
 	var err error
-	if len(data) != segmentLength {
+	rs := []rune(data)
+	if len(rs) != segmentLength {
 		return NewParseError(ErrInvalidRecordLength, "")
 	}
-	c.TxnType = TransactionType(data[:3])
-	c.Amount, err = parseNum(data[3:13])
+	c.TxnType = TransactionType(string(rs[:3]))
+	c.Amount, err = parseNum(string(rs[3:13]))
 	if err != nil {
 		return NewParseError(err, "failed to parse amount")
 	}
-	dateFundsAvail, err := parseDate(data[13:19])
+	dateFundsAvail, err := parseDate(string(rs[13:19]))
 	if err != nil {
 		return NewParseError(err, "failed to parse date funds available")
 	}
 	c.DateFundsAvailable = &dateFundsAvail
-	c.InstitutionID = data[19:28]
-	c.PayeeAccountNo = strings.TrimSpace(data[28:40])
-	c.ItemTraceNo = data[40:62]
-	c.StoredTransactionType = TransactionType(data[62:65])
-	c.OriginatorShortName = strings.TrimSpace(data[65:80])
-	c.PayeeName = strings.TrimSpace(data[80:110])
-	c.OriginatorLongName = strings.TrimSpace(data[110:140])
-	c.UserID = strings.TrimSpace(data[140:150])
-	c.CrossRefNo = strings.TrimSpace(data[150:169])
-	c.ReturnInstitutionID = strings.TrimSpace(data[169:178])
-	c.ReturnAccountNo = strings.TrimSpace(data[178:190])
-	c.SundryInfo = strings.TrimSpace(data[190:205])
-	c.OriginalItemTraceNo = strings.TrimSpace(data[205:227])
-	c.SettlementCode = strings.TrimSpace(data[227:229])
+	c.InstitutionID = string(rs[19:28])
+	c.PayeeAccountNo = strings.TrimSpace(string(rs[28:40]))
+	c.ItemTraceNo = string(rs[40:62])
+	c.StoredTransactionType = TransactionType(string(rs[62:65]))
+	c.OriginatorShortName = strings.TrimSpace(string(rs[65:80]))
+	c.PayeeName = strings.TrimSpace(string(rs[80:110]))
+	c.OriginatorLongName = strings.TrimSpace(string(rs[110:140]))
+	c.UserID = strings.TrimSpace(string(rs[140:150]))
+	c.CrossRefNo = strings.TrimSpace(string(rs[150:169]))
+	c.ReturnInstitutionID = strings.TrimSpace(string(rs[169:178]))
+	c.ReturnAccountNo = strings.TrimSpace(string(rs[178:190]))
+	c.SundryInfo = strings.TrimSpace(string(rs[190:205]))
+	c.OriginalItemTraceNo = strings.TrimSpace(string(rs[205:227]))
+	c.SettlementCode = strings.TrimSpace(string(rs[227:229]))
 	c.RecordType = CreditReverseRecord
 	return nil
 }

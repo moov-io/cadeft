@@ -17,16 +17,20 @@ type RecordHeader struct {
 
 func (rh *RecordHeader) parse(line string) error {
 	var err error
-	if rh.RecordType, err = convertRecordType(line[:1]); err != nil {
+	rs := []rune(line)
+	if len(rs) < 24 {
+		return fmt.Errorf("record header line too short")
+	}
+	if rh.RecordType, err = convertRecordType(string(rs[:1])); err != nil {
 		return fmt.Errorf("faield to parse RecordHeader: %w", err)
 	}
 
-	if rh.recordCount, err = parseNum(line[1:10]); err != nil {
+	if rh.recordCount, err = parseNum(string(rs[1:10])); err != nil {
 		return fmt.Errorf("failed to parse RecordCount: %w", err)
 	}
 
-	rh.OriginatorID = strings.TrimSpace(line[10:20])
-	if rh.FileCreationNum, err = parseNum(line[20:24]); err != nil {
+	rh.OriginatorID = strings.TrimSpace(string(rs[10:20]))
+	if rh.FileCreationNum, err = parseNum(string(rs[20:24])); err != nil {
 		return fmt.Errorf("failed to parse FileCreationNum: %w", err)
 	}
 

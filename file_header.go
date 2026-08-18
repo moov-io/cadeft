@@ -1,7 +1,6 @@
 package cadeft
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -53,27 +52,26 @@ func WithDirectClearerCommunicationArea(comm string) HeaderOpts {
 
 func (fh *FileHeader) parse(line string) error {
 	var err error
-	recordHeader := RecordHeader{}
-	if len(line) < aRecordMinLength {
-		return errors.New("invalid header record length")
+	rs := []rune(line)
+	if len(rs) < aRecordMinLength {
+		return fmt.Errorf("invalid header record length")
 	}
-	err = recordHeader.parse(line)
-	if err != nil {
+	recordHeader := RecordHeader{}
+	if err = recordHeader.parse(line); err != nil {
 		return fmt.Errorf("failed to parse record header: %w", err)
 	}
 	fh.RecordHeader = recordHeader
-	creationDate, err := parseDate(line[24:30])
+	creationDate, err := parseDate(string(rs[24:30]))
 	if err != nil {
 		return fmt.Errorf("failed to parse creation date for file header: %w", err)
 	}
 	fh.CreationDate = &creationDate
-	fh.DestinationDataCenterNo, err = parseNum(line[30:35])
+	fh.DestinationDataCenterNo, err = parseNum(string(rs[30:35]))
 	if err != nil {
 		return fmt.Errorf("failed to parse destination data center for file header: %w", err)
 	}
-	fh.DirectClearerCommunicationArea = strings.TrimSpace(line[35:55])
-
-	fh.CurrencyCode = strings.TrimSpace(line[55:58])
+	fh.DirectClearerCommunicationArea = strings.TrimSpace(string(rs[35:55]))
+	fh.CurrencyCode = strings.TrimSpace(string(rs[55:58]))
 	return nil
 }
 

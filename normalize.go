@@ -1,27 +1,13 @@
 package cadeft
 
-import (
-	"fmt"
-	"unicode"
+import "golang.org/x/text/unicode/norm"
 
-	"golang.org/x/text/unicode/norm"
-
-	"golang.org/x/text/runes"
-	"golang.org/x/text/transform"
-)
-
-// normalizer removes diacritical characters and replaces them with their ASCII representation
-var normalizer = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), runes.Remove(runes.In(unicode.So)), norm.NFC)
-
+// normalize returns the NFC-canonical form of in. Previous versions of
+// this function aborted on non-ASCII input; that's gone — the byte-indexed
+// fixed-width parsers in reader.go and the per-record Parse methods are
+// rune-indexed (Spendbase fork 2026-05-04), so French / accented Latin
+// flows through unchanged. NFC is applied so equivalent forms (precomposed
+// "É" U+00C9 vs. decomposed "E"+U+0301) compare equal downstream.
 func normalize(in string) (string, error) {
-	s, _, err := transform.String(normalizer, in)
-	if err != nil {
-		return "", err
-	}
-	for i := 0; i < len(s); i++ {
-		if s[i] > unicode.MaxASCII {
-			return "", fmt.Errorf("failed to normalize rune %c", s[i])
-		}
-	}
-	return s, nil
+	return norm.NFC.String(in), nil
 }

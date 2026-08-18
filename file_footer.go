@@ -1,7 +1,6 @@
 package cadeft
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 )
@@ -48,8 +47,9 @@ func NewFileFooter(recordHeader RecordHeader, txns []Transaction) *FileFooter {
 // Parse will take in a serialized footer record of type Z and parse the amounts into a FileFooter struct
 func (ff *FileFooter) Parse(line string) error {
 	var err error
-	if len(line) < zRecordMinLength {
-		return errors.New("footer is too short")
+	rs := []rune(line)
+	if len(rs) < zRecordMinLength {
+		return fmt.Errorf("footer is too short")
 	}
 
 	recordHeader := RecordHeader{}
@@ -58,46 +58,46 @@ func (ff *FileFooter) Parse(line string) error {
 		return fmt.Errorf("failed to parse record header for footer: %w", err)
 	}
 	ff.RecordHeader = recordHeader
-	ff.TotalValueOfDebit, err = parseNum(line[24:38])
+	ff.TotalValueOfDebit, err = parseNum(string(rs[24:38]))
 	if err != nil {
 		return fmt.Errorf("failed to parse total value of debit: %w", err)
 	}
-	ff.TotalCountOfDebit, err = parseNum(line[38:46])
+	ff.TotalCountOfDebit, err = parseNum(string(rs[38:46]))
 	if err != nil {
 		return fmt.Errorf("failed to parse total count of debit: %w", err)
 	}
-	ff.TotalValueOfCredit, err = parseNum(line[46:60])
+	ff.TotalValueOfCredit, err = parseNum(string(rs[46:60]))
 	if err != nil {
 		return fmt.Errorf("failed to parse total value of credit: %w", err)
 	}
-	ff.TotalCountOfCredit, err = parseNum(line[60:68])
+	ff.TotalCountOfCredit, err = parseNum(string(rs[60:68]))
 	if err != nil {
 		return fmt.Errorf("failed to parse total count of credit: %w", err)
 	}
-	valERecordSegment := line[68:82]
+	valERecordSegment := string(rs[68:82])
 	if !isFillerString(valERecordSegment) {
 		if ff.TotalValueOfERecords, err = parseNum(valERecordSegment); err != nil {
 			return fmt.Errorf("failed to parse total value of E records: %w", err)
 		}
 	}
 
-	numERecordSegment := line[82:90]
+	numERecordSegment := string(rs[82:90])
 	if !isFillerString(numERecordSegment) {
 		if ff.TotalCountOfERecords, err = parseNum(numERecordSegment); err != nil {
 			return fmt.Errorf("failed to parse total count of E records: %w", err)
 		}
 	}
 
-	valFRecordsSegment := line[90:104]
+	valFRecordsSegment := string(rs[90:104])
 	if !isFillerString(valFRecordsSegment) {
-		if ff.TotalValueOfFRecords, err = parseNum(line[90:104]); err != nil {
+		if ff.TotalValueOfFRecords, err = parseNum(valFRecordsSegment); err != nil {
 			return fmt.Errorf("failed to parse total value of F records: %w", err)
 		}
 	}
 
-	numFRecordSegment := line[104:112]
+	numFRecordSegment := string(rs[104:112])
 	if !isFillerString(numFRecordSegment) {
-		if ff.TotalCountOfFRecords, err = parseNum(line[104:112]); err != nil {
+		if ff.TotalCountOfFRecords, err = parseNum(numFRecordSegment); err != nil {
 			return fmt.Errorf("failed to parse totoal count of F records: %w", err)
 		}
 	}

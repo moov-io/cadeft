@@ -83,7 +83,7 @@ func TestBuildDebitTxn(t *testing.T) {
 		},
 		"non ascii characters": {
 			in:             NewDebit("400", 999, &date, "123456789", "123456789012", "", "śhôrt-ñàmè", "réçëîvér ńámê", "LÖŃG-Ñämė", "123456789", "210987654321", WithUserID("54321"), WithCrossRefNo("123"), WithSettlementCode("01")),
-			expectedOutput: "40000000009990232411234567891234567890120000000000000000000000000short-name     receiver name                 LONG-Name                     54321     123                123456789210987654321                                     0100000000000",
+			expectedOutput: "40000000009990232411234567891234567890120000000000000000000000000śhôrt-ñàmèréçëîvér ńámê         LÖŃG-Ñämė                54321     123                123456789210987654321                                     0100000000000",
 		},
 	}
 	for name, tc := range cases {

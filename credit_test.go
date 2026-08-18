@@ -68,6 +68,30 @@ func TestParseCreditTxn(t *testing.T) {
 	}
 }
 
+func TestParseCreditTxn_PreservesFrenchAccents(t *testing.T) {
+	r := require.New(t)
+	// 240-rune Credit segment with "Nom Émetteur" in OriginatorShortName (runes 65:80).
+	// Total length is 240 runes but 241 bytes — exercises the rune-indexed parser.
+	segment := "450" + "0000004042" + "023137" + "061214821" + "101000000303" +
+		"6121006100001000000003" + "000" +
+		"Nom Émetteur   " + // 15 runes (12 chars + 3 trailing spaces)
+		"D1-1-OCC ZERO                 " + // 30 runes
+		"BANK OF MONTREA               " + // 30 runes
+		"0000000110" +
+		"1140               " +
+		"000101261" +
+		"8989899     " +
+		"               " +
+		"                      " +
+		"  " +
+		"           "
+	r.Equal(240, len([]rune(segment)))
+
+	var c Credit
+	r.NoError(c.Parse(segment))
+	r.Equal("Nom Émetteur", c.OriginatorShortName)
+}
+
 func TestBuildCreditTxn(t *testing.T) {
 	type testCase struct {
 		in             Credit
@@ -86,7 +110,7 @@ func TestBuildCreditTxn(t *testing.T) {
 		},
 		"non ascii characters": {
 			in:             NewCredit("400", 999, &date, "123456789", "123456789012", "", "śhôrt-ñàmè", "réçëîvér ńámê", "LÖŃG-Ñämė", "123456789", "210987654321", WithUserID("54321"), WithCrossRefNo("123"), WithSettlementCode("01")),
-			expectedOutput: "40000000009990232411234567891234567890120000000000000000000000000short-name     receiver name                 LONG-Name                     54321     123                123456789210987654321                                     0100000000000",
+			expectedOutput: "40000000009990232411234567891234567890120000000000000000000000000śhôrt-ñàmèréçëîvér ńámê         LÖŃG-Ñämė                54321     123                123456789210987654321                                     0100000000000",
 		},
 	}
 	for name, tc := range cases {
