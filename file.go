@@ -255,6 +255,7 @@ func (f File) buildTxnEntries(txns []Transaction, recordHeader RecordHeader, cur
 
 // Validate runs validation on the entire file starting from the FileHeader then every Taransaction.
 // Any error that is encountered will be appended to a multierror and returned to the caller.
+// When Footer is set, Z-record debit/credit/E/F totals and counts must match the transactions.
 func (f File) Validate() error {
 	var err error
 	headerErr := f.Header.Validate()
@@ -265,6 +266,33 @@ func (f File) Validate() error {
 		txnErr := t.Validate()
 		if txnErr != nil {
 			err = multierror.Append(err, fmt.Errorf("faild to validate txn %d: %w", i, txnErr))
+		}
+	}
+	if f.Footer != nil {
+		expected := NewFileFooter(f.Footer.RecordHeader, f.Txns)
+		if f.Footer.TotalValueOfDebit != expected.TotalValueOfDebit {
+			err = multierror.Append(err, fmt.Errorf("footer total value of debit: got %d want %d", f.Footer.TotalValueOfDebit, expected.TotalValueOfDebit))
+		}
+		if f.Footer.TotalCountOfDebit != expected.TotalCountOfDebit {
+			err = multierror.Append(err, fmt.Errorf("footer total count of debit: got %d want %d", f.Footer.TotalCountOfDebit, expected.TotalCountOfDebit))
+		}
+		if f.Footer.TotalValueOfCredit != expected.TotalValueOfCredit {
+			err = multierror.Append(err, fmt.Errorf("footer total value of credit: got %d want %d", f.Footer.TotalValueOfCredit, expected.TotalValueOfCredit))
+		}
+		if f.Footer.TotalCountOfCredit != expected.TotalCountOfCredit {
+			err = multierror.Append(err, fmt.Errorf("footer total count of credit: got %d want %d", f.Footer.TotalCountOfCredit, expected.TotalCountOfCredit))
+		}
+		if f.Footer.TotalValueOfERecords != expected.TotalValueOfERecords {
+			err = multierror.Append(err, fmt.Errorf("footer total value of E records: got %d want %d", f.Footer.TotalValueOfERecords, expected.TotalValueOfERecords))
+		}
+		if f.Footer.TotalCountOfERecords != expected.TotalCountOfERecords {
+			err = multierror.Append(err, fmt.Errorf("footer total count of E records: got %d want %d", f.Footer.TotalCountOfERecords, expected.TotalCountOfERecords))
+		}
+		if f.Footer.TotalValueOfFRecords != expected.TotalValueOfFRecords {
+			err = multierror.Append(err, fmt.Errorf("footer total value of F records: got %d want %d", f.Footer.TotalValueOfFRecords, expected.TotalValueOfFRecords))
+		}
+		if f.Footer.TotalCountOfFRecords != expected.TotalCountOfFRecords {
+			err = multierror.Append(err, fmt.Errorf("footer total count of F records: got %d want %d", f.Footer.TotalCountOfFRecords, expected.TotalCountOfFRecords))
 		}
 	}
 	return err
