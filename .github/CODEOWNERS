@@ -1,5 +1,4 @@
-* @adamdecaf
-* @wadearnold
+* @adamdecaf @wadearnold
 
 # Lockfiles have no owners so dependency-only PRs skip code-owner review.
 go.mod
