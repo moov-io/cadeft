@@ -5,7 +5,7 @@ go 1.26.0
 toolchain go1.27.3
 
 require (
-	github.com/go-playground/validator/v10 v10.30.5
+	github.com/go-playground/validator/v10 v10.30.6
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/stretchr/testify v1.12.1
 	golang.org/x/net v0.62.0
@@ -13,9 +13,9 @@ require (
 )
 
 require (
-	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
-	github.com/go-playground/locales v0.14.1 // indirect
-	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.16 // indirect
+	github.com/go-playground/locales v0.14.2 // indirect
+	github.com/go-playground/universal-translator v0.18.2 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/leodido/go-urn v1.5.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
