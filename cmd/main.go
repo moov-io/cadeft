@@ -13,71 +13,99 @@ import (
 )
 
 func main() {
+	if err := run(os.Args[1:], os.Stdin, os.Stdout, os.Stderr); err != nil {
+		if err == flag.ErrHelp {
+			os.Exit(0)
+		}
+		log.Fatal(err)
+	}
+}
+
+func run(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
+	fs := flag.NewFlagSet("cadeft", flag.ContinueOnError)
+	fs.SetOutput(stderr)
+
 	var mode string
 	var fileName string
-	flag.StringVar(&mode, "mode", "", "define the usage of the parser either build or parse")
-	flag.StringVar(&fileName, "file", "", "eft file to parse")
-	validate := flag.Bool("validate", false, "apply valdidation to file when building or parsing")
-	flag.Parse()
+	fs.StringVar(&mode, "mode", "", "define the usage of the parser either build or parse")
+	fs.StringVar(&fileName, "file", "", "EFT file to parse or JSON file to build")
+	validate := fs.Bool("validate", false, "apply validation to the file when building or parsing")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
 
 	if mode != "parse" && mode != "build" {
-		log.Fatal("invalid mode flag value, can only use parse or build")
+		return fmt.Errorf("invalid mode flag value, can only use parse or build")
 	}
 
 	if mode == "parse" {
-		// open file pointed to by file
-		var eftFile cadeft.File
-		if fileName != "" {
-			file, err := os.Open(fileName)
-			if err != nil {
-				log.Fatal(fmt.Errorf("failed to open file %s: %w", fileName, err))
-			}
-			reader := cadeft.NewReader(file)
-			eftFile, err = reader.ReadFile()
-			if err != nil {
-				log.Fatal(fmt.Errorf("failed to parse file: %w", err))
-			}
-		} else {
-			stdin, err := io.ReadAll(os.Stdin)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			rawFile := string(stdin)
-			if len(stdin) == 0 {
-				return
-			}
-			reader := cadeft.NewReader(strings.NewReader(rawFile))
-			eftFile, err = reader.ReadFile()
-			if err != nil {
-				log.Fatal(err)
+		eftFile, err := parseFile(fileName, stdin)
+		if err != nil {
+			return err
+		}
+		if *validate {
+			if err := eftFile.Validate(); err != nil {
+				return err
 			}
 		}
 		output, err := json.Marshal(eftFile)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
-		fmt.Printf("%s", output)
-	} else if mode == "build" {
-		if fileName != "" {
-			file, err := os.Open(fileName)
-			if err != nil {
-				log.Fatal(err)
-			}
-			var eftFile cadeft.File
-			if err := json.NewDecoder(file).Decode(&eftFile); err != nil {
-				log.Fatal(err)
-			}
-			if *validate {
-				if err := eftFile.Validate(); err != nil {
-					log.Fatal(err)
-				}
-			}
-			s, err := eftFile.Create()
-			if err != nil {
-				log.Fatal(err)
-			}
-			fmt.Printf("%s", s)
+		fmt.Fprintf(stdout, "%s", output)
+		return nil
+	}
+
+	if fileName == "" {
+		return fmt.Errorf("-file is required when -mode is build")
+	}
+	file, err := os.Open(fileName)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	var eftFile cadeft.File
+	if err := json.NewDecoder(file).Decode(&eftFile); err != nil {
+		return err
+	}
+	if *validate {
+		if err := eftFile.Validate(); err != nil {
+			return err
 		}
 	}
+	s, err := eftFile.Create()
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "%s", s)
+	return nil
+}
+
+func parseFile(fileName string, stdin io.Reader) (cadeft.File, error) {
+	if fileName != "" {
+		file, err := os.Open(fileName)
+		if err != nil {
+			return cadeft.File{}, fmt.Errorf("failed to open file %s: %w", fileName, err)
+		}
+		defer file.Close()
+		eftFile, err := cadeft.NewReader(file).ReadFile()
+		if err != nil {
+			return cadeft.File{}, fmt.Errorf("failed to parse file: %w", err)
+		}
+		return eftFile, nil
+	}
+
+	raw, err := io.ReadAll(stdin)
+	if err != nil {
+		return cadeft.File{}, err
+	}
+	if len(raw) == 0 {
+		return cadeft.File{}, nil
+	}
+	eftFile, err := cadeft.NewReader(strings.NewReader(string(raw))).ReadFile()
+	if err != nil {
+		return cadeft.File{}, err
+	}
+	return eftFile, nil
 }
